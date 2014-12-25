@@ -4,13 +4,30 @@ var http = require('http');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  	sendRequest(statusOptions, '#!' + security_token + '@', function (json) {
-  		res.render('index', { leftOpen: json.leftOpen });
+	var authed = req.session.authenticated;
+	var success = req.session.successCode;
+	var error = req.session.errorCode;
+
+  	sendRequest(statusOptions, '#!' + security_token + '@', 
+  	function (json) {
+  		if (authed)
+  		{
+  			res.render('index', { authenticated: authed, error: error, success: success, leftOpen: json.leftOpen });
+  		} else {
+  			res.render('index', { authenticated: authed, error: error, success: success });
+  		}
   	}, function (e) {
-  		console.log("got error message");
-  		res.render('index', { errorCode: 'failed-to-connect'})
-  	}
-)});
+  		if (authed)
+  		{
+  			res.render('index', { authenticated: authed, error: error, success: success, errorCode: 'failed-to-connect'});
+  		} else {
+  			res.render('index', { authenticated: authed, error: error, success: success,});
+  		}
+  	});
+
+  	req.session.successCode = null;
+  	req.session.errorCode = null;
+  });
 
 var garageServerAddress = 'garage.jpbuckley.com';
 var garageServerPort = 3630;
@@ -66,8 +83,21 @@ function sendRequest(options, body, callback, error)
 }
 
 var security_token = "AhS1629H3Nn5%2h3&9xFpQL";
+var app_password = "merrychristmas!";
 
-//router.use(express.bodyParser());
+router.post('/login', function (req, res) {
+	var password = req.body.password;
+
+	if (password == app_password)
+	{
+		req.session.authenticated = true;
+	} else {
+		req.session.authenticated = false;
+		req.session.errorCode = "incorrect-login";
+	}
+
+	res.redirect('/');
+});
 
 router.post('/left', function (req, res) {
   var sec_token = req.body.security_token;
@@ -76,14 +106,15 @@ router.post('/left', function (req, res) {
   if (sec_token == security_token)
   {
   	sendRequest(leftOptions, '#!' + security_token + '@', function (json) {
-  	  console.log()
-  	  res.render('index', { leftOpen: json.leftOpen, success : true});
+  		req.session.successCode = true;
+ 		res.redirect('/');
 	 });
   }
 
   // unauthorized
   else 
   {
+  	req.session.errorCode = "failed-to-connect";
  	res.redirect('/');
   }
 });
@@ -95,13 +126,15 @@ router.post('/right', function (req, res) {
   if (sec_token == security_token)
   {
   	sendRequest(rightOptions, '#!' + security_token + '@', function (json) {
-  	  res.render('index', { leftOpen: json.leftOpen, success : true});
+  		req.session.successCode = true;
+ 		res.redirect('/');
 	 });
   }
 
   // unauthorized
   else 
   {
+  	req.session.errorCode = "failed-to-connect";
   	res.redirect('/');
   }
 });

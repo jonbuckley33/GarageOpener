@@ -18,9 +18,10 @@ block content
 		}
 
 	if success
-		div(class="alert alert-success").
-			Your request was successfully submitted, please refresh
-			soon to check whether action was successful.
+		div(class="alert alert-success")
+			| Your request was successfully submitted, please 
+			a(href="/") refresh 
+			| soon to check whether action was successful.
 
 	if errorCode
 		div(class="alert alert-danger")
@@ -29,23 +30,31 @@ block content
 					The arduino server could not be reached. Check the status of the 
 					arduino and check back later.
 
+			else if errorCode == "incorrect-login"
+				p.
+					The password you inputted was incorrect, please try again. 
 
-	div(id="garages" class="row")
-		div(class="left col-md-6")
-			if leftOpen
-				img(class="img garage" src="/images/open-garage.jpeg")
-			else 
+
+	if authenticated
+		div(id="garages" class="row")
+			div(class="left col-md-6")
+				if leftOpen
+					img(class="img garage" src="/images/open-garage.jpeg")
+				else 
+					img(class="img garage" src="/images/close-garage.jpeg")
+
+				form(action="/left" method="POST")
+					input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
+					input(class="btn btn-primary" type="Submit" value="Left Door")
+
+
+			div(class="right col-md-6")
 				img(class="img garage" src="/images/close-garage.jpeg")
-
-			form(action="/left" method="POST")
-				input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
-				input(class="btn btn-primary" type="Submit" value="Left Door")
-
-
-		div(class="right col-md-6")
-			img(class="img garage" src="/images/close-garage.jpeg")
-			form(action="/right" method="POST")
-				input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
-				input(class="btn btn-primary" type="Submit" value="Right Door")
-
+				form(action="/right" method="POST")
+					input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
+					input(class="btn btn-primary" type="Submit" value="Right Door")
+	else
+		form(action="/login" method="POST")
+			input(type="text" name="password")
+			input(type="Submit" value="Login")
 	
