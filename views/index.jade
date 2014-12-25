@@ -12,6 +12,11 @@ block content
 			height: 60%;
 		}
 
+		img.garage {
+			height: 100px;
+			max-width: 200px;
+		}
+
 	if success
 		div(class="alert alert-success").
 			Your request was successfully submitted, please refresh
@@ -28,9 +33,9 @@ block content
 	div(id="garages" class="row")
 		div(class="left col-md-6")
 			if leftOpen
-				img(src="/images/open-garage.jpeg")
+				img(class="img garage" src="/images/open-garage.jpeg")
 			else 
-				img(src="/images/close-garage.jpeg")
+				img(class="img garage" src="/images/close-garage.jpeg")
 
 			form(action="/left" method="POST")
 				input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
@@ -38,7 +43,7 @@ block content
 
 
 		div(class="right col-md-6")
-			img(src="/images/close-garage.jpeg")
+			img(class="img garage" src="/images/close-garage.jpeg")
 			form(action="/right" method="POST")
 				input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
 				input(class="btn btn-primary" type="Submit" value="Right Door")
