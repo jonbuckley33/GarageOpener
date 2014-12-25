@@ -1,0 +1,46 @@
+extends layout
+
+block content
+	script(src="/javascripts/jquery-1.11.2.min.js")
+	link(rel='stylesheet' href="/stylesheets/bootstrap.min.css")
+	script(src="/javascripts/bootstrap.min.js")
+	link(rel='stylesheet', href='/stylesheets/style.css')
+	link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet")
+
+	style.
+		.garages {
+			height: 60%;
+		}
+
+	if success
+		div(class="alert alert-success").
+			Your request was successfully submitted, please refresh
+			soon to check whether action was successful.
+
+	if errorCode
+		div(class="alert alert-danger")
+			if errorCode == "failed-to-connect"
+				p.
+					The arduino server could not be reached. Check the status of the 
+					arduino and check back later.
+
+
+	div(id="garages" class="row")
+		div(class="left col-md-6")
+			if leftOpen
+				img(src="/images/open-garage.jpeg")
+			else 
+				img(src="/images/close-garage.jpeg")
+
+			form(action="/left" method="POST")
+				input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
+				input(class="btn btn-primary" type="Submit" value="Left Door")
+
+
+		div(class="right col-md-6")
+			img(src="/images/close-garage.jpeg")
+			form(action="/right" method="POST")
+				input(type="hidden" name="security_token" value="AhS1629H3Nn5%2h3&9xFpQL")
+				input(class="btn btn-primary" type="Submit" value="Right Door")
+
+	
