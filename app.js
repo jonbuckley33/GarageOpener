@@ -56,13 +56,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
-// could be/remain at top of file
-var http = require('http');    
-
-var server = http.createServer (app); 
-
-server.listen(5000, function(){
-   console.log('Express server on port 5000');
-});
+var port = process.env.PORT || 3000;
+app.listen(port);
 
 module.exports = app;
